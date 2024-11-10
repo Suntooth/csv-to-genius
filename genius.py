@@ -13,7 +13,7 @@ from unidecode import unidecode
 from string import punctuation
 
 def removePunctuation(inp): # removes characters that aren't in genius urls
-    badChars = '''’•…“”'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+    badChars = '''’•●…“”'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
 
     inp = inp.replace(" - Bonus Track", "") # in most cases this is how genius does it
     inp = inp.replace("&", "and")
@@ -29,11 +29,17 @@ def removePunctuation(inp): # removes characters that aren't in genius urls
     return inp
 
 
-def removeFeat(inp):    # handles multiple artists
+def removeFeatArtist(inp):    # handles multiple artists
     inp = inp.replace("\,", "@~{a})")   # replace a comma *in an artist name* with something that will not be in the rest of the name...
     artists = inp.split(",", 1)
     artists[0] = artists[0].replace("@~{a})", ",")    # ...in order to bring it back intact after splitting artists
     return artists[0]
+
+def removeFeatSong(inp):
+    parts = inp.split("(feat", 1)   # removes "(feat. [artist])" and "(featuring [artist])"
+    parts = parts[0].split("(with", 1)
+    parts = parts[0].split("[feat", 1)
+    return parts[0]
     
 
 lines = []  # will be a 2d array later on
@@ -47,13 +53,13 @@ with open("songs.csv", mode="r", newline="", encoding="utf8") as csvfile:   # re
 
     for row in songs:
         if not start:   # there's headers on the csv file! we need to not read those
-            artistPunct = removeFeat(str(row[3]))   # artists is the fourth column in the csv
-            artist = unidecode(removePunctuation(removeFeat(str(row[3])))).replace(" ","-") # four functions on one string. lovely
+            artistNormal = removeFeatArtist(str(row[3]))   # artists is the fourth column in the csv
+            artist = unidecode(removePunctuation(removeFeatArtist(str(row[3])))).replace(" ","-") # four functions on one string. lovely
             
-            songPunct = str(row[1]) # song title is the second column in the csv
-            song = unidecode(removePunctuation(str(row[1]))).replace(" ","-")
+            songNormal = str(row[1]) # song title is the second column in the csv
+            song = unidecode(removePunctuation(removeFeatSong(str(row[1])))).replace(" ","-")
             
-            lines.append([artist,song,artistPunct,songPunct])   # puts all the relevant details in one line of a 2d array
+            lines.append([artist,song,artistNormal,songNormal])   # puts all the relevant details in one line of a 2d array
    
         start = False   # for if this was the headers
 

@@ -15,7 +15,7 @@ import csv
 from unidecode import unidecode
 
 def removePunctuation(inp): # removes characters that aren't in genius urls
-    badChars = [",", "(", ")", "'", "!", "?", ".", "-"]
+    badChars = [",", "(", ")", "'", "!", "?", ".", "-", "/"]
 
     for i in range(len(badChars)):
         inp = inp.replace(badChars[i],"")   

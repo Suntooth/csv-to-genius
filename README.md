@@ -9,10 +9,10 @@
 
 ## Instructions
 ### Installation
-#### Option 1
+#### Option 1 (may be outdated)
 Download `csv-to-genius.exe` from [the latest release](https://github.com/suntooth/csv-to-genius/releases/latest).
 
-#### Option 2
+#### Option 2 (guaranteed to be up-to-date)
 Ensure you have the pip packages `requests`, `csv`, and `unidecode` installed, as well as Python 3.10.8, then download the source code. Other versions of Python may work, but may not.
 
 ### Usage

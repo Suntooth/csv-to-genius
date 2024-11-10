@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
 # SPOTIFY PLAYLIST CSV TO GENIUS LYRIC LINKS
+# https://github.com/Suntooth/csv-to-genius
+#
 # Designed to work with the default output CSVs from Exportify
 # https://exportify.app/
-#
-# Limitations:
-# - A link may break if an artist/song title has punctuation I forgot
-# - Will not work with non-Latin alphabet characters
-# -- I could write code in the future to support this, but with varying results on Genius' end because they're inconsistent
 #
 # ===================================================================================
 
 import requests
 import csv
 from unidecode import unidecode
+from string import punctuation
 
 def removePunctuation(inp): # removes characters that aren't in genius urls
-    badChars = [",", "(", ")", "'", "!", "?", ".", "-", "/"]
+    badChars = '''’•…“”'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
 
-    for i in range(len(badChars)):
-        inp = inp.replace(badChars[i],"")   
-
+    inp = inp.replace(" - Bonus Track", "") # in most cases this is how genius also does it
     inp = inp.replace("&", "and")
+    inp = inp.replace(" - ", "")
+
+    for punct in punctuation:
+        if punct != "-":    # seems that genius keeps dashes in the middle of words
+            inp = inp.replace(punct,"")
+    
+    for i in badChars:
+        inp = inp.replace(i,"")
     
     return inp
 
 
-def removeFeat(inp):    # handles multiple artists
+def removeFeat(inp):    # handles multiple artists, but also messes up artist names with commas in them
     artists = inp.split(",", 1)
     return artists[0]
     

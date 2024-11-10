@@ -3,7 +3,7 @@
 
 ## Limitations
 - Cannot currently handle non-Latin scripts (e.g. Japanese, Cyrillic, Tifinagh).
-- Some cases (features, subtitles, etc.) may not be handled in the same way that Genius handles them, causing the link to lead to a 404 error.
+- Some cases (features, subtitles, etc.) may not be handled in the same way that Genius handles them, causing the link to lead to a 404 error even if the song exists on Genius.
 - Links may lead to a 404 error if the artist and/or song name contains punctuation that isn't handled - report this as a bug if you come across it, as it's easily fixed.
 - Checking if links exist takes a long time compared to not checking - 34.808 seconds vs 0.012 seconds for the same 100-song playlist. (This is why there is an option to not check links.)
 

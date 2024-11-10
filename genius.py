@@ -15,12 +15,12 @@ from string import punctuation
 def removePunctuation(inp): # removes characters that aren't in genius urls
     badChars = '''’•…“”'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
 
-    inp = inp.replace(" - Bonus Track", "") # in most cases this is how genius also does it
+    inp = inp.replace(" - Bonus Track", "") # in most cases this is how genius does it
     inp = inp.replace("&", "and")
     inp = inp.replace(" - ", "")
 
     for punct in punctuation:
-        if punct != "-":    # seems that genius keeps dashes in the middle of words
+        if punct != "-":    # genius keeps dashes in the middle of words
             inp = inp.replace(punct,"")
     
     for i in badChars:
@@ -29,8 +29,10 @@ def removePunctuation(inp): # removes characters that aren't in genius urls
     return inp
 
 
-def removeFeat(inp):    # handles multiple artists, but also messes up artist names with commas in them
+def removeFeat(inp):    # handles multiple artists
+    inp = inp.replace("\,", "@~{a})")   # replace a comma *in an artist name* with something that will not be in the rest of the name...
     artists = inp.split(",", 1)
+    artists[0] = artists[0].replace("@~{a})", ",")    # ...in order to bring it back intact after splitting artists
     return artists[0]
     
 

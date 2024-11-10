@@ -13,7 +13,7 @@
 Download `csv-to-genius.exe` from [the latest release](https://github.com/suntooth/csv-to-genius/releases/latest).
 
 #### Option 2
-Ensure you have the pip packages `requests`, `csv`, and `unidecode` installed, then download the source code.
+Ensure you have the pip packages `requests`, `csv`, and `unidecode` installed, as well as Python 3.10.8, then download the source code. Other versions of Python may work, but may not.
 
 ### Usage
 1. Export the playlist you want to process using [Exportify](https://exportify.app/). Other services that export a CSV with the exact same format will also work.

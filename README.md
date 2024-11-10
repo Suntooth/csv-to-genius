@@ -4,7 +4,7 @@
 ## Limitations
 - Cannot currently handle non-Latin scripts (e.g. Japanese, Cyrillic, Tifinagh).
 - Checking if links exist takes a long time compared to not checking - 34.808 seconds vs 0.012 seconds for the same 100-song playlist. (This is why there is an option to not check links.)
-- There will always be some songs where the Genius page can't be found with just the information on Spotify, usually due to artists changing names or the Genius page having a slightly different song name to Spotify.
+- There will always be some songs where the Genius page can't be found with just the information on Spotify, usually due to artists changing names, the Genius page having a slightly different song name to Spotify, or Genius being inconsistent with its own URL rules.
 
 ## Known issues
 - Repeated consecutive punctuation may be processed incorrectly.

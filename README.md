@@ -6,8 +6,7 @@
 - Checking if links exist takes a long time compared to not checking - 34.808 seconds vs 0.012 seconds for the same 100-song playlist. (This is why there is an option to not check links.)
 
 ## Known issues
-- If an artist's name contains a comma, it will be processed incorrectly.
-- Repeated punctuation may be processed incorrectly.
+- Repeated consecutive punctuation may be processed incorrectly.
 - Links may be processed incorrectly if the artist and/or song name contains punctuation that isn't explicitly handled.
 - Some cases (features, subtitles, etc.) may not be handled in the same way that Genius handles them, causing the link to lead to a 404 error even if the song exists on Genius.
 - In rare cases, a link may be marked as not existing even though it does exist (example: Transmissions of Static by we.own.the.sky).

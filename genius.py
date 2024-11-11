@@ -18,13 +18,16 @@ def removePunctuation(inp): # removes characters that aren't in genius urls
     badChars = '''’•●…“”Ææ'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
 
 # this series of replacements could probably be done in a more compact way, but i'd rather keep it clear what's what
+# "why not use regex" it's difficult to write, difficult to read, and difficult to debug. no regex unless absolutely required
     inp = inp.replace(" - Bonus Track", "") # in most cases this is how genius does it
     inp = inp.replace(" - bonus track", "")
     inp = inp.replace(" - Hidden Track", "")
-    inp = inp.replace(" & ", "and")   # inconsistent! sometimes it's just removed like other punctuation. hopefully the spaces are the difference
+    inp = inp.replace(" & ", " and ")   # inconsistent! sometimes it's just removed like other punctuation. hopefully the spaces are the difference
     inp = inp.replace("&", "-") # U&ME by alt-j was the realisation here
     inp = inp.replace(" - ", "-")   # if this causes double dashes it'll usually be fixed later
     inp = inp.replace("/", "-")
+    inp = inp.replace("_", "-")
+    inp = inp.replace(":", "-")
 
     for punct in punctuation:
         if punct != "-":    # genius keeps dashes in the middle of words (+ this preserves other stuff)
@@ -43,22 +46,21 @@ def removeFeatArtist(inp):    # handles multiple artists
     return artists[0]
 
 def removeFeatSong(inp):
-# same as the above replacements: this function could be more compact but this way of doing it is much clearer to read
-# "why not use regex" it's difficult to write, difficult for humans to read, and difficult to debug. avoid if at all possible
-    parts = inp.split("(feat", 1)   # removes "(feat. [artist])" and "(featuring [artist])"
-    parts = parts[0].split("(with", 1)
-    parts = parts[0].split("[feat", 1)
+# same as the above replacements: this function could be more compact but this way of doing it is much clearer to read. no regex here
+    parts = inp.split(" (feat", 1)   # removes "(feat. [artist])" and "(featuring [artist])"
+    parts = parts[0].split(" (with", 1)
+    parts = parts[0].split(" [feat", 1)
     parts = parts[0].split(" feat.", 1)  # there's a few songs that don't use brackets for features
-    parts = parts[0].split(" - Remaster")   # i can't account for most remasters without regex but i can do this variant
+    parts = parts[0].split(" - Remaster", 1)   # i can't account for most remasters without regex, but i can account for this variant
     return parts[0]
     
 
-lines = []  # will be a 2d array later on
-check404 = True if int(input("""Should the program check if generated links exist?
-This will greatly increase the time it takes to run. (1 for yes, 2 for no) """)) == 1 else False    # 34.808 seconds vs 0.012 seconds
-print("Running...")                                                                                 # for the same 100-song playlist
+lines = []  # will become a 2d array
+print("Should the program check if generated links exist?")
+check404 = True if int(input("This will greatly increase the time it takes to run. (1 for yes, 2 for no) ")) == 1 else False
+print("Running...")
 
-with open("songs.csv", mode="r", newline="", encoding="utf8") as csvfile:   # reading the csv file
+with open("songs.csv", mode="r", newline="", encoding="utf8") as csvfile:   # you have to specify utf8 because otherwise unidecode will break
     start = True
     songs = csv.reader(csvfile) # reads the entire csv file and puts it in a variable
 
@@ -78,15 +80,16 @@ with open("songs.html", "w", encoding="utf8") as htmlfile:  # writing to a html 
     towrite = """<html>
     <head>
         <meta charset="UTF-8">
+        <link href="style.css" rel="stylesheet" type="text/css" media="all">
     </head>
-    <body>"""   # hashtag justhtmlthings
+    <body>"""   # hashtag justhtmlthings. secret feature: you can use a style.css file to change how the list looks. just for fun
 
     htmlfile.write(towrite)
     
     for j in range(len(lines)):
         link = 'https://genius.com/' + lines[j][0] + '-' + lines[j][1] + '-lyrics'  # creates the link
 
-# at some point this will have to be changed, since when introducing non-latin characters and consecutive punctuation, things get weird. fine for now though
+# at some point this will have to be changed, since when introducing non-latin characters and consecutive punctuation, things get weird (see Feint, 寻)
         link = link.replace("--", "-")  # to fix anywhere there might be weirdness with punctuation
         link = link.replace("--", "-")  # doing it twice to fix more problems
 
@@ -103,7 +106,7 @@ with open("songs.html", "w", encoding="utf8") as htmlfile:  # writing to a html 
 """
         htmlfile.write(ahref)
 
-    towrite = """</body>
+    towrite = """   </body>
 </html>"""
 
     htmlfile.write(towrite)

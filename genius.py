@@ -5,7 +5,9 @@
 # Designed to work with the default output CSVs from Exportify
 # https://exportify.app/
 #
-# ===================================================================================
+# This is the most I've ever commented my code. Hopefully it helps someone!
+#
+# ========================================================================================
 
 import requests
 import csv
@@ -13,14 +15,19 @@ from unidecode import unidecode
 from string import punctuation
 
 def removePunctuation(inp): # removes characters that aren't in genius urls
-    badChars = '''’•●…“”'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+    badChars = '''’•●…“”Ææ'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
 
+# this series of replacements could probably be done in a more compact way, but i'd rather keep it clear what's what
     inp = inp.replace(" - Bonus Track", "") # in most cases this is how genius does it
-    inp = inp.replace("&", "and")
-    inp = inp.replace(" - ", "")
+    inp = inp.replace(" - bonus track", "")
+    inp = inp.replace(" - Hidden Track", "")
+    inp = inp.replace(" & ", "and")   # inconsistent! sometimes it's just removed like other punctuation. hopefully the spaces are the difference
+    inp = inp.replace("&", "-") # U&ME by alt-j was the realisation here
+    inp = inp.replace(" - ", "-")   # if this causes double dashes it'll usually be fixed later
+    inp = inp.replace("/", "-")
 
     for punct in punctuation:
-        if punct != "-":    # genius keeps dashes in the middle of words
+        if punct != "-":    # genius keeps dashes in the middle of words (+ this preserves other stuff)
             inp = inp.replace(punct,"")
     
     for i in badChars:
@@ -36,9 +43,12 @@ def removeFeatArtist(inp):    # handles multiple artists
     return artists[0]
 
 def removeFeatSong(inp):
+# same as the above replacements. this function could be more compact but this way of doing it is much clearer
     parts = inp.split("(feat", 1)   # removes "(feat. [artist])" and "(featuring [artist])"
     parts = parts[0].split("(with", 1)
     parts = parts[0].split("[feat", 1)
+    parts = parts[0].split(" feat.", 1)  # there's a few songs that don't use brackets for features
+    parts = parts[0].split(" - Remaster")   # i can't account for most remasters without regex but i can do this variant
     return parts[0]
     
 
@@ -74,7 +84,9 @@ with open("songs.html", "w", encoding="utf8") as htmlfile:  # writing to a html 
     
     for j in range(len(lines)):
         link = 'https://genius.com/' + lines[j][0] + '-' + lines[j][1] + '-lyrics'  # creates the link
-        link = link.replace("--", "-")  # to fix anywhere there might be weirdness with punctuation (non-latin: do this first. see Feint - 寻)
+
+        link = link.replace("--", "-")  # to fix anywhere there might be weirdness with punctuation
+        link = link.replace("--", "-")  # doing it twice to fix more problems
 
         if check404:
             if requests.head(link).status_code != 404:  # checking if the song exists on genius

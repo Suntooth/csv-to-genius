@@ -30,8 +30,8 @@ def removePunctuation(inp): # removes characters that aren't in genius urls
         if punct != "-":    # genius keeps dashes in the middle of words (+ this preserves other stuff)
             inp = inp.replace(punct,"")
     
-    for i in badChars:
-        inp = inp.replace(i,"")
+    for char in badChars:  # goes through each character in badChars and removes it from the name
+        inp = inp.replace(char,"")
     
     return inp
 
@@ -43,7 +43,8 @@ def removeFeatArtist(inp):    # handles multiple artists
     return artists[0]
 
 def removeFeatSong(inp):
-# same as the above replacements. this function could be more compact but this way of doing it is much clearer
+# same as the above replacements: this function could be more compact but this way of doing it is much clearer to read
+# "why not use regex" it's difficult to write, difficult for humans to read, and difficult to debug. avoid if at all possible
     parts = inp.split("(feat", 1)   # removes "(feat. [artist])" and "(featuring [artist])"
     parts = parts[0].split("(with", 1)
     parts = parts[0].split("[feat", 1)
@@ -59,7 +60,7 @@ print("Running...")                                                             
 
 with open("songs.csv", mode="r", newline="", encoding="utf8") as csvfile:   # reading the csv file
     start = True
-    songs = csv.reader(csvfile) # initialise the csv reader
+    songs = csv.reader(csvfile) # reads the entire csv file and puts it in a variable
 
     for row in songs:
         if not start:   # there's headers on the csv file! we need to not read those
@@ -73,7 +74,7 @@ with open("songs.csv", mode="r", newline="", encoding="utf8") as csvfile:   # re
    
         start = False   # for if this was the headers
 
-with open("songs.html", "w", encoding="utf8") as htmlfile:  # writing to a html file
+with open("songs.html", "w", encoding="utf8") as htmlfile:  # writing to a html file is the same as writing to a txt file
     towrite = """<html>
     <head>
         <meta charset="UTF-8">
@@ -85,6 +86,7 @@ with open("songs.html", "w", encoding="utf8") as htmlfile:  # writing to a html 
     for j in range(len(lines)):
         link = 'https://genius.com/' + lines[j][0] + '-' + lines[j][1] + '-lyrics'  # creates the link
 
+# at some point this will have to be changed, since when introducing non-latin characters and consecutive punctuation, things get weird. fine for now though
         link = link.replace("--", "-")  # to fix anywhere there might be weirdness with punctuation
         link = link.replace("--", "-")  # doing it twice to fix more problems
 

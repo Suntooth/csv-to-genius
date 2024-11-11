@@ -2,12 +2,17 @@
 # SPOTIFY PLAYLIST CSV TO GENIUS LYRIC LINKS
 # https://github.com/Suntooth/csv-to-genius
 #
-# Designed to work with the default output CSVs from Exportify
+# Designed to work with the default output CSVs from Exportify.
 # https://exportify.app/
 #
 # This is the most I've ever commented my code. Hopefully it helps someone!
 #
-# ========================================================================================
+# A note to anyone wishing to contribute:
+#   I'd like to avoid regex, even if it makes things more compact or fixes bugs.
+#   Regex is difficult to write, difficult to read, and difficult to debug.
+#   Find other solutions.
+#
+# =======================================================================================================
 
 import requests
 import csv
@@ -16,18 +21,17 @@ from string import punctuation
 
 def removePunctuation(inp): # removes characters that aren't in genius urls
     badChars = '''’•●…“”Ææ'''    # already handled by the string module: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+    badPhrases = [" - Bonus Track", " - bonus track", " - Hidden Track"]
+    toDash = [" - ", "&", "/", "_", ":"]    #turn to a dash instead of being deleted
 
-# this series of replacements could probably be done in a more compact way, but i'd rather keep it clear what's what
-# "why not use regex" it's difficult to write, difficult to read, and difficult to debug. no regex unless absolutely required
-    inp = inp.replace(" - Bonus Track", "") # in most cases this is how genius does it
-    inp = inp.replace(" - bonus track", "")
-    inp = inp.replace(" - Hidden Track", "")
-    inp = inp.replace(" & ", " and ")   # inconsistent! sometimes it's just removed like other punctuation. hopefully the spaces are the difference
-    inp = inp.replace("&", "-") # U&ME by alt-j was the realisation here
-    inp = inp.replace(" - ", "-")   # if this causes double dashes it'll usually be fixed later
-    inp = inp.replace("/", "-")
-    inp = inp.replace("_", "-")
-    inp = inp.replace(":", "-")
+    inp = inp.replace(" & ", " and ")   # pretty sure the spaces are the difference between this and the cases where it turns to a dash
+
+    # phrase and to-dash replacements MUST be done before the punctuation list. badchars can be anywhere i think
+    for phrase in badPhrases:
+        inp = inp.replace(phrase, "")
+
+    for dash in toDash:
+        inp = inp.replace(dash, "-")
 
     for punct in punctuation:
         if punct != "-":    # genius keeps dashes in the middle of words (+ this preserves other stuff)
@@ -43,15 +47,17 @@ def removeFeatArtist(inp):    # handles multiple artists
     inp = inp.replace("\,", "@~{a})")   # replace a comma *in an artist name* with something that will not be in the rest of the name...
     artists = inp.split(",", 1)
     artists[0] = artists[0].replace("@~{a})", ",")    # ...in order to bring it back intact after splitting artists
+    
     return artists[0]
 
+
 def removeFeatSong(inp):
-# same as the above replacements: this function could be more compact but this way of doing it is much clearer to read. no regex here
-    parts = inp.split(" (feat", 1)   # removes "(feat. [artist])" and "(featuring [artist])"
-    parts = parts[0].split(" (with", 1)
-    parts = parts[0].split(" [feat", 1)
-    parts = parts[0].split(" feat.", 1)  # there's a few songs that don't use brackets for features
-    parts = parts[0].split(" - Remaster", 1)   # i can't account for most remasters without regex, but i can account for this variant
+    badSuffixes = [" (feat", " [feat", " feat.", " (with", " - Remaster"] # to deal with various forms of suffixes
+    parts = [inp]
+
+    for suffix in badSuffixes:
+        parts = parts[0].split(suffix, 1)
+
     return parts[0]
     
 
@@ -90,7 +96,7 @@ with open("songs.html", "w", encoding="utf8") as htmlfile:  # writing to a html 
         link = 'https://genius.com/' + lines[j][0] + '-' + lines[j][1] + '-lyrics'  # creates the link
 
 # at some point this will have to be changed, since when introducing non-latin characters and consecutive punctuation, things get weird (see Feint, 寻)
-        link = link.replace("--", "-")  # to fix anywhere there might be weirdness with punctuation
+        link = link.replace("--", "-")  # to fix double dashes
         link = link.replace("--", "-")  # doing it twice to fix more problems
 
         if check404:

@@ -12,6 +12,8 @@
 - Some cases (features, subtitles, etc.) may not be handled in the same way that Genius handles them, causing the link to lead to a 404 error even if the song exists on Genius.
 - If a song has a Genius page but is missing lyrics, it will still show as not existing.
 
+This program has been tested on an extensive 3300-song personal playlist; the most common error was the program's inability to process many remastered tracks correctly, due to their title format.
+
 ## Instructions
 ### Installation
 #### Option 1 (may be outdated)

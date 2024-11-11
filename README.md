@@ -7,8 +7,8 @@
 - There will always be some songs where the Genius page can't be found with just the information on Spotify, usually due to artists changing names, the Genius page having a slightly different song name to Spotify, or Genius being inconsistent with its own URL rules.
 
 ## Known issues
-- Repeated consecutive punctuation may be processed incorrectly.
-- Links may be processed incorrectly if the artist and/or song name contains punctuation that isn't explicitly handled.
+- Repeated consecutive punctuation may be handled incorrectly.
+- Links may be handled incorrectly if the artist and/or song name contains punctuation that isn't explicitly handled.
 - Some cases (features, subtitles, etc.) may not be handled in the same way that Genius handles them, causing the link to lead to a 404 error even if the song exists on Genius.
 - If a song has a Genius page but is missing lyrics, it will still show as not existing.
 
